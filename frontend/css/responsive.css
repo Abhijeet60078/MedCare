@@ -1,0 +1,85 @@
+/* ==========================================================================
+   MedCare Hospital - Responsive Styles
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+  .hero {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .hero h1 {
+    font-size: 2.3rem;
+  }
+
+  .hero-img-wrap {
+    margin-top: 40px;
+  }
+
+  .floating-card {
+    display: none;
+  }
+
+  .navbar-collapse {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 767.98px) {
+  section {
+    padding: 60px 0;
+  }
+
+  .section-title h2 {
+    font-size: 1.7rem;
+  }
+
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .stat-box .counter {
+    font-size: 1.9rem;
+  }
+
+  .page-banner {
+    padding: 80px 0 40px;
+  }
+
+  .emergency-hotline {
+    font-size: 1.8rem;
+  }
+
+  .newsletter-box {
+    padding: 30px 20px;
+  }
+
+  #backToTop {
+    bottom: 20px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .doctor-card img {
+    height: 200px;
+  }
+
+  .filter-bar {
+    padding: 16px;
+  }
+}
