@@ -3,7 +3,7 @@
 A modern responsive full stack hospital management system...
 
 🚀 Live Demo
-https://medcare-ly58.onrender.com
+https://medcare-1y58.onrender.com
 
 Features:
 ✅ Doctor Search
