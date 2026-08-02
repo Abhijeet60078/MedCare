@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 
@@ -17,6 +18,12 @@ const testimonialRoutes = require('./routes/testimonialRoutes');
 connectDB();
 
 const app = express();
+const frontendRoot = path.join(__dirname, '..', 'frontend');
+const frontendDist = path.join(frontendRoot, 'dist');
+const frontendServePath = fs.existsSync(frontendDist) ? frontendDist : frontendRoot;
+const frontendIndexPath = fs.existsSync(path.join(frontendDist, 'index.html'))
+  ? path.join(frontendDist, 'index.html')
+  : path.join(frontendRoot, 'index.html');
 
 // ------- Middleware -------
 app.use(cors());
@@ -25,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 // Serve the frontend statically (so you can run everything from one server)
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use(express.static(frontendServePath));
 
 // ------- API Routes (MVC: routes -> controllers -> models) -------
 app.use('/api/doctors', doctorRoutes);
@@ -42,7 +49,7 @@ app.get('/api/health', (req, res) => {
 // Fallback: serve index.html for any non-API route (basic SPA-style support)
 app.get('*', (req, res, next) => {
   if (req.originalUrl.startsWith('/api')) return next();
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+  res.sendFile(frontendIndexPath);
 });
 
 // ------- Error Handling (must be last) -------
