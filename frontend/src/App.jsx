@@ -1,6 +1,7 @@
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { ToastContext } from './context/ToastContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoadingSpinner, SiteHeader, SiteFooter, BackToTop, ToastBanner } from './components/Layout';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
@@ -9,15 +10,49 @@ import DepartmentsPage from './pages/DepartmentsPage';
 import AppointmentPage from './pages/AppointmentPage';
 import ContactPage from './pages/ContactPage';
 import EmergencyPage from './pages/EmergencyPage';
+import AuthPage from './pages/AuthPage';
+import {
+  AdminDashboardPage,
+  DashboardHubPage,
+  DoctorDashboardPage,
+  PatientDashboardPage,
+} from './pages/DashboardPage';
 
 const THEME_KEY = 'medcare-theme';
 
 function App() {
   return (
-    <BrowserRouter>
-      <AppShell />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppShell />
+      </BrowserRouter>
+    </AuthProvider>
   );
+}
+
+function DashboardLandingRoute() {
+  const { authUser } = useAuth();
+
+  if (authUser) {
+    return <Navigate replace to={`/dashboard/${authUser.role}`} />;
+  }
+
+  return <DashboardHubPage />;
+}
+
+function ProtectedDashboardRoute({ requiredRole, children }) {
+  const { authUser } = useAuth();
+  const location = useLocation();
+
+  if (!authUser) {
+    return <Navigate replace to={`/auth/${requiredRole}/login`} state={{ from: location.pathname }} />;
+  }
+
+  if (authUser.role !== requiredRole) {
+    return <Navigate replace to={`/dashboard/${authUser.role}`} />;
+  }
+
+  return children;
 }
 
 function AppShell() {
@@ -94,6 +129,33 @@ function AppShell() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/doctors" element={<DoctorsPage />} />
             <Route path="/departments" element={<DepartmentsPage />} />
+            <Route path="/dashboard" element={<DashboardLandingRoute />} />
+            <Route
+              path="/dashboard/admin"
+              element={
+                <ProtectedDashboardRoute requiredRole="admin">
+                  <AdminDashboardPage />
+                </ProtectedDashboardRoute>
+              }
+            />
+            <Route
+              path="/dashboard/doctor"
+              element={
+                <ProtectedDashboardRoute requiredRole="doctor">
+                  <DoctorDashboardPage />
+                </ProtectedDashboardRoute>
+              }
+            />
+            <Route
+              path="/dashboard/patient"
+              element={
+                <ProtectedDashboardRoute requiredRole="patient">
+                  <PatientDashboardPage />
+                </ProtectedDashboardRoute>
+              }
+            />
+            <Route path="/auth" element={<Navigate replace to="/auth/patient/login" />} />
+            <Route path="/auth/:role/:mode" element={<AuthPage />} />
             <Route path="/appointment" element={<AppointmentPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/emergency" element={<EmergencyPage />} />

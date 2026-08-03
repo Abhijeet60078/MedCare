@@ -13,6 +13,7 @@ const appointmentRoutes = require('./routes/appointmentRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
 const testimonialRoutes = require('./routes/testimonialRoutes');
+const medicalRecordRoutes = require('./routes/medicalRecordRoutes');
 
 // Connect to MongoDB
 connectDB();
@@ -40,6 +41,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/medical-records', medicalRecordRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

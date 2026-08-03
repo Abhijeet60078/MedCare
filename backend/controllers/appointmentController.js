@@ -31,14 +31,15 @@ const createAppointment = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Get all appointments (supports ?status=)
+// @desc    Get all appointments (supports ?status= & ?email= & ?doctor=)
 // @route   GET /api/appointments
 // @access  Public (should be admin-only in production)
 const getAppointments = asyncHandler(async (req, res) => {
-  const { status, email } = req.query;
+  const { status, email, doctor } = req.query;
   const query = {};
   if (status) query.status = status;
   if (email) query.email = email;
+  if (doctor) query.doctor = doctor;
 
   const appointments = await Appointment.find(query)
     .populate('doctor', 'name specialization department image')

@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 const Doctor = require('./models/Doctor');
 const Department = require('./models/Department');
 const Testimonial = require('./models/Testimonial');
+const MedicalRecord = require('./models/MedicalRecord');
 
 const departments = [
   { name: 'Cardiology', icon: 'fa-heart-pulse', description: 'Heart & cardiovascular care' },
@@ -127,11 +128,48 @@ const seedData = async () => {
       Doctor.deleteMany(),
       Department.deleteMany(),
       Testimonial.deleteMany(),
+      MedicalRecord.deleteMany(),
     ]);
 
     await Department.insertMany(departments);
-    await Doctor.insertMany(doctors);
+    const insertedDoctors = await Doctor.insertMany(doctors);
     await Testimonial.insertMany(testimonials);
+
+    await MedicalRecord.insertMany([
+      {
+        patientName: 'Meera Joshi',
+        patientEmail: 'meera.joshi@example.com',
+        patientPhone: '+91 90000 00001',
+        doctor: insertedDoctors[0]._id,
+        visitDate: new Date('2026-07-18T10:30:00Z'),
+        symptoms: 'Chest discomfort and shortness of breath',
+        diagnosis: 'Stable angina with elevated blood pressure',
+        prescription: 'Aspirin 75mg daily, lifestyle changes, follow-up in 2 weeks',
+        notes: 'Monitor blood pressure twice daily and avoid heavy exertion.',
+      },
+      {
+        patientName: 'Vikram Singh',
+        patientEmail: 'vikram.singh@example.com',
+        patientPhone: '+91 90000 00002',
+        doctor: insertedDoctors[1]._id,
+        visitDate: new Date('2026-07-20T14:00:00Z'),
+        symptoms: 'Recurring migraine and dizziness',
+        diagnosis: 'Migraine with tension headaches',
+        prescription: 'Hydration plan, magnesium supplement, pain relief as needed',
+        notes: 'Recommended sleep hygiene and a symptom diary.',
+      },
+      {
+        patientName: 'Ritu Desai',
+        patientEmail: 'ritu.desai@example.com',
+        patientPhone: '+91 90000 00003',
+        doctor: insertedDoctors[2]._id,
+        visitDate: new Date('2026-07-24T09:15:00Z'),
+        symptoms: 'Knee pain after sports activity',
+        diagnosis: 'Mild ligament strain',
+        prescription: 'Rest, ice therapy, knee support for 10 days',
+        notes: 'Physiotherapy to begin if pain persists after review.',
+      },
+    ]);
 
     console.log('✅ Sample data seeded successfully!');
     process.exit(0);

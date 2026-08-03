@@ -1,11 +1,12 @@
 import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { formatIndianNumber } from '../services/format';
 
 export const NAV_ITEMS = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
-  { to: '/doctors', label: 'Doctors' },
   { to: '/departments', label: 'Departments' },
+  { to: '/dashboard', label: 'Dashboards' },
   { to: '/emergency', label: 'Emergency' },
   { to: '/contact', label: 'Contact' },
 ];
@@ -19,6 +20,8 @@ export function LoadingSpinner({ hidden }) {
 }
 
 export function SiteHeader({ theme, onToggleTheme }) {
+  const { authUser, logout } = useAuth();
+
   return (
     <nav className="navbar navbar-expand-lg fixed-top">
       <div className="container">
@@ -38,10 +41,32 @@ export function SiteHeader({ theme, onToggleTheme }) {
               </li>
             ))}
           </ul>
-          <div className="d-flex align-items-center gap-3">
+          <div className="header-actions d-flex align-items-center gap-3">
             <button className="theme-toggle-btn" id="themeToggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
               <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} />
             </button>
+            {authUser ? (
+              <div className="header-auth-chip d-none d-md-flex align-items-center gap-2">
+                <i className="fa-solid fa-circle-user" />
+                <span>
+                  {authUser.name || authUser.email} · {authUser.role}
+                </span>
+              </div>
+            ) : null}
+            {authUser ? (
+              <button className="btn btn-outline-custom" type="button" onClick={logout}>
+                Logout
+              </button>
+            ) : (
+              <Link to="/dashboard" className="btn btn-outline-custom">
+                Access Portal
+              </Link>
+            )}
+            {authUser ? (
+              <Link to={`/dashboard/${authUser.role}`} className="btn btn-primary-custom">
+                Dashboard
+              </Link>
+            ) : null}
             <Link to="/appointment" className="btn btn-primary-custom">
               Book Appointment
             </Link>
@@ -81,8 +106,8 @@ export function SiteFooter() {
             <h5>Quick Links</h5>
             <div className="footer-links">
               <Link to="/about">About Us</Link>
-              <Link to="/doctors">Doctors</Link>
               <Link to="/departments">Departments</Link>
+              <Link to="/dashboard">Dashboards</Link>
               <Link to="/appointment">Appointment</Link>
             </div>
           </div>
